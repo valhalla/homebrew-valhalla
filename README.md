@@ -1,6 +1,8 @@
 # Homebrew Valhalla
 
-Formulas for installing the [Valhalla](https://github.com/valhalla/valhalla) routing engine and its related libraries on Mac OS using the [Homebrew](https://brew.sh/) package manager.
+Formulas for compiling and installing the [Valhalla](https://github.com/valhalla/valhalla) routing engine on Mac OS using the [Homebrew](https://brew.sh/) package manager.
+
+Also includes [prime_server](https://github.com/kevinkreiser/prime_server), a dependency of Valhalla.
 
 ## Installation
 
