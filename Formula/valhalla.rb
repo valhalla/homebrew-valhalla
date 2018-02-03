@@ -1,38 +1,53 @@
 class Valhalla < Formula
   desc "Routing engine for OpenStreetMap, Transitland, and elevation tiles"
   homepage "https://github.com/valhalla/valhalla/"
-  url "https://github.com/valhalla/valhalla.git", :tag => "2.4.6", :shallow => true
-  sha256 "e24207d520fb6edaf82e93ce593f12f0f6f1278aef30e1d8ab5893890f474374"
+  url "https://github.com/valhalla/valhalla.git",
+      :tag => "2.4.6",
+      :revision => "c92f2433b010574f78565edd196a628dfa452436"
 
-  option "without-python-bindings", "Skip compiling optional Python bindings"
+  option "without-boost-python", "Skip compiling Python bindings"
 
-  ["autoconf", "automake", "libtool", "libspatialite", "geos", "pkg-config"].each do |package|
-    depends_on package => :build
-  end
-  ["protobuf", "protobuf-c", "sqlite", "lua", "jq", "curl", "prime_server", "lz4"].each do |package|
-    depends_on package
-  end
+  deprecated_option "without-python-bindings" => "without-boost-python"
 
-  unless build.without? "python-bindings"
-    depends_on "boost-python" => :build
-  end
+  depends_on "autoconf" => :build
+  depends_on "automake" => :build
+  depends_on "libtool" => :build
+  depends_on "pkg-config" => :build
+  depends_on "boost-python" => :recommended
+  depends_on "curl" if MacOS.version <= :lion
+  depends_on "geos"
+  depends_on "jq"
+  depends_on "libspatialite"
+  depends_on "lua"
+  depends_on "lz4"
+  depends_on "prime_server"
+  depends_on "protobuf"
+  depends_on "protobuf-c"
+  depends_on "sqlite"
 
   def install
+    ENV["PYTHON_LIBS"] = "-undefined dynamic_lookup"
+
     system "./autogen.sh"
-    system "export LDFLAGS=\"-L#{HOMEBREW_PREFIX}/opt/sqlite/lib/ -lsqlite3\""
-    system "export PKG_CONFIG_PATH=#{HOMEBREW_PREFIX}/opt/curl/lib/pkgconfig"
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}",
-                          "--with-protobuf-libdir=#{HOMEBREW_PREFIX}/opt/protobuf-c/lib",
-                          "--with-protoc=#{HOMEBREW_PREFIX}/opt/protobuf/bin/protoc",
-                          # "--link-python-framework-via-dynamic-lookup", TODO: improve Python module stuff
-                          "--enable-python-bindings=#{build.without?("python-bindings") ? 'no' : 'yes'}"
+
+    args = %W[
+      --disable-dependency-tracking
+      --disable-silent-rules
+      --prefix=#{prefix}
+    ]
+    if build.with? "boost-python"
+      args << "--enable-python-bindings=yes"
+    else
+      args << "--enable-python-bindings=no"
+    end
+
+    system "./configure", *args
     system "make", "install"
   end
 
   test do
-    pipe_output("${bin}/valhalla_service").include?("Usage: valhalla_service config/file.json [concurrency]")
+    output = shell_output("#{bin}/valhalla_service", 1)
+    assert_match "Usage: #{bin}/valhalla_service config/file.json", output
+    system "python", "-c", "import valhalla"
   end
 end
