@@ -2,8 +2,8 @@ class Valhalla < Formula
   desc "Routing engine for OpenStreetMap, Transitland, and elevation tiles"
   homepage "https://github.com/valhalla/valhalla/"
   url "https://github.com/valhalla/valhalla.git",
-      :tag => "2.4.6",
-      :revision => "c92f2433b010574f78565edd196a628dfa452436"
+      :tag => "2.4.7",
+      :revision => "2c086e9716da2e0eba91206849c2a95f2d63d53b"
 
   option "without-boost-python", "Skip compiling Python bindings"
 
