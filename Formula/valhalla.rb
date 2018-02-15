@@ -4,7 +4,7 @@
     url "https://github.com/valhalla/valhalla.git",
         :tag => "2.4.7",
         :revision => "2c086e9716da2e0eba91206849c2a95f2d63d53b"
-    revision 1
+    revision 2
 
     option "without-boost-python", "Skip compiling Python bindings"
 
@@ -25,7 +25,7 @@
     depends_on "protobuf"
     depends_on "protobuf-c"
     depends_on "sqlite"
-    depends_on "core_utils" # to supply nproc
+    depends_on "coreutils" # to supply nproc
 
     def install
       ENV["PYTHON_LIBS"] = "-undefined dynamic_lookup"
