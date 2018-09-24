@@ -2,16 +2,15 @@
     desc "Routing engine for OpenStreetMap, Transitland, and elevation tiles"
     homepage "https://github.com/valhalla/valhalla/"
     url "https://github.com/valhalla/valhalla.git",
-        :tag => "2.5.0",
-        :revision => "924872a208cf285de7bb57c4c3819025780dcec8"
+        :tag => "2.7.0",
+        :revision => "c7ef276bdc2d033dcea01feb9d066b6ea6c80a51"
     revision 1
 
     option "without-boost-python", "Skip compiling Python bindings"
 
     deprecated_option "without-python-bindings" => "without-boost-python"
 
-    depends_on "autoconf" => :build
-    depends_on "automake" => :build
+    depends_on "cmake" => :build
     depends_on "libtool" => :build
     depends_on "pkg-config" => :build
     depends_on "boost-python" => :recommended
@@ -25,27 +24,31 @@
     depends_on "protobuf"
     depends_on "protobuf-c"
     depends_on "sqlite"
-    depends_on "coreutils" => :recommended # to supply nproc for scripts
+    depends_on "coreutils" # to supply nproc for scripts
     depends_on "parallel" => :recommended # for scripts
+
+    head do
+      url "https://github.com/valhalla/valhalla.git", :using => :git, :branch => "master"
+    end
 
     def install
       ENV["PYTHON_LIBS"] = "-undefined dynamic_lookup"
-
-      system "./autogen.sh"
-
-      args = %W[
-        --disable-dependency-tracking
-        --disable-silent-rules
-        --prefix=#{prefix}
-      ]
+      args = []
       if build.with? "boost-python"
-        args << "--enable-python-bindings=yes"
+        args << "-DENABLE_PYTHON_BINDINGS=On"
       else
-        args << "--enable-python-bindings=no"
+        args << "-DENABLE_PYTHON_BINDINGS=Off"
       end
+      args << "-DCMAKE_BUILD_TYPE=Release"
+      args << "-DENABLE_NODE_BINDINGS=Off" # TODO: support Node bindings in the future
 
-      system "./configure", *args
-      system "make", "install"
+      system "git submodule update --init --recursive"
+
+      mkdir "build" do
+        system "cmake", "..", *args, *std_cmake_args
+        system "make"
+        system "make", "install"
+     end
     end
 
     test do
