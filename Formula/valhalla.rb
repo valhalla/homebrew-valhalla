@@ -2,9 +2,10 @@
     desc "Routing engine for OpenStreetMap, Transitland, and elevation tiles"
     homepage "https://github.com/valhalla/valhalla/"
     url "https://github.com/valhalla/valhalla.git",
-        :tag => "2.7.0",
-        :revision => "c7ef276bdc2d033dcea01feb9d066b6ea6c80a51"
-    revision 1
+        # :tag => "2.7.0",
+        :revision => "87bb212ccd30e53bf445c1b4732645da4d19a7c0"
+    # revision 1
+    version "3.0.2-rc" # NOTE: not really, this is a placeholder
 
     option "without-boost-python", "Skip compiling Python bindings"
 
