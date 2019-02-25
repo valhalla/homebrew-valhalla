@@ -2,8 +2,8 @@ class PrimeServer < Formula
   desc "Non-blocking web server API based on ZeroMQ"
   homepage "https://github.com/kevinkreiser/prime_server"
   url "https://github.com/kevinkreiser/prime_server.git",
-      :tag => "0.6.3",
-      :revision => "a6e972ba0df1c0b1348b41576c672a8475aace69"
+      :tag => "0.6.4",
+      :revision => "14c7592d604264110eb70e984dc6ccd4d9b04a69"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
